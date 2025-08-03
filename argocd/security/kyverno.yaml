@@ -1,18 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: security
+  name: kyverno
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/ibrahimbakayoko/SecureGitOpsLab.git
-    path: argocd/security
-    targetRevision: HEAD
+    repoURL: https://kyverno.github.io/kyverno/
+    chart: kyverno
+    targetRevision: 3.1.4
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: kyverno
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

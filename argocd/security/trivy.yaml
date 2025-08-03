@@ -1,18 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: security
+  name: trivy
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/ibrahimbakayoko/SecureGitOpsLab.git
-    path: argocd/security
-    targetRevision: HEAD
+    repoURL: https://aquasecurity.github.io/helm-charts/
+    chart: trivy-operator
+    targetRevision: 0.20.0
   destination:
     server: https://kubernetes.default.svc
-    namespace: argocd
+    namespace: trivy-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

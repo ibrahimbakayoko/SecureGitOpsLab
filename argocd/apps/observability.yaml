@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/ibrahimbakayoko/SecureGitOpsLab.git
-    path: argocd/security
+    path: argocd/observability
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
