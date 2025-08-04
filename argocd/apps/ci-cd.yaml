@@ -1,31 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: gitlab-runner
+  name: cicd
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://charts.gitlab.io
-    chart: gitlab-runner
-    targetRevision: 0.64.0
-    helm:
-      values: |
-        gitlabUrl: https://gitlab.com/
-        runnerRegistrationToken: "glrt-gdbLg40sa8KjasbNx1JxoG86MQpwOjE3MDZ4cwp0OjMKdTplcTdldBg.01.1j0ztfb92"
-        runners:
-          config: |
-            [[runners]]
-              executor = "shell"
-              [runners.cache]
-                Type = "s3"
-                Shared = true
+    repoURL: https://github.com/ibrahimbakayoko/SecureGitOpsLab.git
+    path: argocd/cicd
+    targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: gitlab
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
