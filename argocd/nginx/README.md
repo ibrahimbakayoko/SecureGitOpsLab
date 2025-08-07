@@ -1,79 +1,101 @@
-Dossier nginx – Déploiement multi-environnements avec Argo CD
-🎯 Objectif
-Le dossier nginx contient les applications enfant Argo CD qui permettent de déployer NGINX dans trois environnements distincts :
+⚙️ Déploiement NGINX multi-environnements avec ArgoCD
+Ce dossier contient la configuration GitOps pour déployer NGINX dans trois environnements distincts (Dev, Staging, Prod) via ArgoCD, selon le modèle App of Apps.
 
-Développement (nginx-dev.yaml)
-
-Staging (nginx-staging.yaml)
-
-Production (nginx-prod.yaml)
-
-Ces applications enfant sont orchestrées par un App-of-Apps (nginx.yaml) situé dans apps/.
-Chaque application enfant va chercher :
-
-Le chart Helm dans helm-deploy/overlays/chart/
-
-Son fichier values.yaml spécifique à l’environnement dans helm-deploy/overlays/{env}/
-
-📁 Structure des fichiers
+📁 Arborescence
 bash
+Copier
+Modifier
 nginx/
-├── nginx-dev.yaml        # Application enfant Argo CD pour l'environnement Dev
-├── nginx-staging.yaml    # Application enfant Argo CD pour l'environnement Staging
-└── nginx-prod.yaml       # Application enfant Argo CD pour l'environnement Prod
+├── nginx-dev.yaml       # Application enfant ArgoCD pour l'environnement Dev
+├── nginx-staging.yaml   # Application enfant ArgoCD pour l'environnement Staging
+└── nginx-prod.yaml      # Application enfant ArgoCD pour l'environnement Prod
+📍 Chemins utilisés par les enfants :
 
-Ces fichiers définissent les manifestes Kubernetes pour Argo CD, avec :
+Chart Helm : helm-deploy/overlays/chart/
 
-repoURL : dépôt Git contenant ce projet
+Fichier values spécifique : helm-deploy/overlays/{env}/{env}-values.yaml
 
-path : chemin vers le chart Helm (helm-deploy/overlays/chart)
+🧩 Rôle de chaque composant
+1️⃣ App-of-Apps
+Dans apps/nginx.yaml, l’application parent ArgoCD référence les trois enfants (nginx-dev, nginx-staging, nginx-prod).
 
-valueFiles : chemin vers le fichier de valeurs spécifique à l’environnement
+2️⃣ Applications enfants (nginx-dev.yaml, nginx-staging.yaml, nginx-prod.yaml)
+Chaque application :
 
-destination.namespace : namespace cible pour le déploiement
+Pointe vers le même chart Helm (helm-deploy/overlays/chart)
 
-syncPolicy : activation de la synchro automatique et du CreateNamespace
+Utilise un fichier de valeurs dédié (dev-values.yaml, staging-values.yaml, prod-values.yaml)
 
-🔄 Flux de déploiement
-App-of-Apps
+Déploie NGINX dans un namespace spécifique
 
-Dans apps/nginx.yaml, on définit une application Argo CD principale qui référence les trois applications enfant (nginx-dev, nginx-staging, nginx-prod).
+Active :
 
-Applications enfant
+Sync automatique
 
-Chaque YAML du dossier nginx/ est une Application Argo CD qui déploie NGINX dans son environnement dédié.
+Self-heal
 
-Les enfants pointent vers le même chart Helm mais avec des valeurs différentes.
+Création automatique du namespace (CreateNamespace)
 
-Helm Chart et valeurs
-
-Le chart Helm est défini ici :
-
+📦 Structure Helm
 bash
-helm-deploy/overlays/chart/
+Copier
+Modifier
+helm-deploy/
+└── overlays/
+    ├── chart/
+    │   ├── Chart.yaml
+    │   ├── templates/
+    │   │   ├── deployment.yaml
+    │   │   └── service.yaml
+    │   └── values.yaml
+    ├── dev/
+    │   └── dev-values.yaml
+    ├── staging/
+    │   └── staging-values.yaml
+    └── prod/
+        └── prod-values.yaml
+chart/ → Chart Helm de base
 
-Les valeurs spécifiques à chaque environnement sont dans :
+{env}/{env}-values.yaml → Configurations spécifiques à l’environnement
 
+🚀 Déploiement
+📌 1. Déployer tous les environnements :
 bash
-helm-deploy/overlays/dev/dev-values.yaml
-helm-deploy/overlays/staging/staging-values.yaml
-helm-deploy/overlays/prod/prod-values.yaml
-
-🚀 Commandes utiles
-Déployer toutes les applications enfant
-bash
+Copier
+Modifier
 kubectl apply -f nginx/
-Déployer un seul environnement (ex: Dev)
+📌 2. Déployer un seul environnement (exemple : Dev) :
 bash
+Copier
+Modifier
 kubectl apply -f nginx/nginx-dev.yaml
-Vérifier les applications dans Argo CD
+📌 3. Vérifier les applications dans ArgoCD :
 bash
+Copier
+Modifier
 kubectl get applications -n argocd
-📊 Avantages de cette organisation
+🌐 Accès et gestion ArgoCD
+Lister toutes les applications :
+
+bash
+Copier
+Modifier
+kubectl get applications -n argocd
+Forcer la synchronisation d’une app :
+
+bash
+Copier
+Modifier
+argocd app sync <app-name>
+✅ Avantages de cette organisation
 Séparation claire des environnements
 
-Réutilisation du même chart Helm
+Réutilisation d’un seul chart Helm
 
-App-of-Apps pour orchestrer facilement plusieurs déploiements
+Gestion centralisée via App-of-Apps
 
-Automatisation via Argo CD (sync + self-heal)
+Déploiement 100% GitOps (déclaratif et versionné)
+
+💡 Conseil :
+Garde apps/nginx.yaml minimal, et toute la logique propre à chaque environnement dans les enfants.
+
