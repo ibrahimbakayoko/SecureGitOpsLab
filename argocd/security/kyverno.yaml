@@ -8,11 +8,12 @@ spec:
   source:
     repoURL: https://kyverno.github.io/kyverno/
     chart: kyverno
-    targetRevision: 3.5.0
+    targetRevision: 3.1.4
     helm:
-      parameters:
-        - name: installCRDs
-          value: "true"
+      values: |
+        admissionController:
+          tls:
+            generateSelfSignedCert: true
   destination:
     server: https://kubernetes.default.svc
     namespace: kyverno
@@ -22,4 +23,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ApplyOptions=--server-side=true
