@@ -11,7 +11,7 @@ spec:
     path: argocd/helm-deploy/overlays/chart
     helm:
       valueFiles:
-        - ../prod-values.yaml
+        - ../prod/prod-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx-prod
