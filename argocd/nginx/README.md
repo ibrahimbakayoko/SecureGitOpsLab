@@ -14,6 +14,8 @@ Chart Helm : helm-deploy/overlays/chart/
 
 Fichier values spécifique : helm-deploy/overlays/{env}/{env}-values.yaml
 
+--- 
+
 🧩 Rôle de chaque composant
 
 1️⃣ App-of-Apps
@@ -80,6 +82,8 @@ Forcer la synchronisation d’une app :
 ```bash
 argocd app sync <app-name>
 ```
+---
+
 ✅ Avantages de cette organisation
 Séparation claire des environnements
 
