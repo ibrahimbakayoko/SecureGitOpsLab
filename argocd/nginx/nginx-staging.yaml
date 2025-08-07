@@ -11,7 +11,7 @@ spec:
     path: argocd/helm-deploy/overlays/chart
     helm:
       valueFiles:
-        - ../../staging/staging-values.yaml
+        - argocd/helm-deploy/overlays/staging/staging-values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx-staging
