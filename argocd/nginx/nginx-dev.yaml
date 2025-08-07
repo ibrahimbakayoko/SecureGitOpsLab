@@ -11,7 +11,7 @@ spec:
     path: argocd/helm-deploy/overlays/chart
     helm:
       valueFiles:
-        - argocd/helm-deploy/overlays/dev/dev-values.yaml
+        - ../dev/dev-values.yaml  # Chemin relatif au dossier "path"
   destination:
     server: https://kubernetes.default.svc
     namespace: nginx-dev
