@@ -1,17 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kyverno
+  name: nginx-prod
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://kyverno.github.io/kyverno/
-    chart: kyverno
-    targetRevision: 3.1.4
+    repoURL: https://github.com/ibrahimbakayoko/SecureGitOpsLab.git
+    targetRevision: HEAD
+    path: argocd/helm-deploy/overlays/chart
+    helm:
+      valueFiles:
+        - ../../prod/prod-values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: kyverno
+    namespace: nginx-prod
   syncPolicy:
     automated:
       prune: true
