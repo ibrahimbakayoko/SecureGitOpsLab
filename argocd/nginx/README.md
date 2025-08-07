@@ -1,6 +1,6 @@
 ⚙️ Déploiement NGINX multi-environnements avec ArgoCD
 Ce dossier contient la configuration GitOps pour déployer NGINX dans trois environnements distincts (Dev, Staging, Prod) via ArgoCD, selon le modèle App of Apps.
-
+--- 
 📁 Arborescence
 ```bash
 nginx/
