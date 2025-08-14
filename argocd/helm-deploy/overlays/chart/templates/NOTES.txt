@@ -1,0 +1,8 @@
+1. Pour voir les pods :
+   kubectl get pods
+
+2. Pour accéder à l'application en local (ClusterIP) :
+   kubectl port-forward svc/{{ include "my-test-app.fullname" . }} 3000:3000
+
+3. Pour production (LoadBalancer), récupérez l'IP externe :
+   kubectl get svc {{ include "my-test-app.fullname" . }}

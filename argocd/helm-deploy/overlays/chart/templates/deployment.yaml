@@ -1,22 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "my-test-app.fullname" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}
+      app: {{ include "my-test-app.name" . }}
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
+        app: {{ include "my-test-app.name" . }}
     spec:
       containers:
-        - name: nginx
+        - name: {{ include "my-test-app.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.service.port }}
+          env:
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
