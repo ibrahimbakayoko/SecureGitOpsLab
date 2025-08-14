@@ -1,5 +1,6 @@
 apiVersion: v2
-name: nginx-test
-description: A Helm chart for NGINX
+name: my-test-app
+description: A simple Helm chart for my test Node.js app
+type: application
 version: 0.1.0
-appVersion: "1.25"
+appVersion: "1.0.0"
