@@ -1,14 +1,11 @@
 replicaCount: 3
-
 image:
   repository: registry.gitlab.com/grouptest2480246/my-test-app
-  tag: stable
+  tag: 39dfd5d0
   pullPolicy: IfNotPresent
-
 service:
   type: LoadBalancer
   port: 3000
-
 resources:
   limits:
     cpu: 500m
@@ -16,7 +13,6 @@ resources:
   requests:
     cpu: 250m
     memory: 256Mi
-
 env:
   - name: NODE_ENV
     value: "production"
