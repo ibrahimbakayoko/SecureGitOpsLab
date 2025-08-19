@@ -1,0 +1,18 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: kyverno-test-policy
+spec:
+  validationFailureAction: audit
+  rules:
+    - name: check-label-exists
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Le label 'app' devrait être présent"
+        pattern:
+          metadata:
+            labels:
+              app: "?*"
