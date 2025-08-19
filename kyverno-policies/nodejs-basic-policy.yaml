@@ -1,0 +1,48 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: nodejs-basic-policy
+spec:
+  validationFailureAction: audit
+  rules:
+    - name: require-app-label
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Chaque Pod doit avoir le label 'app'"
+        pattern:
+          metadata:
+            labels:
+              app: "?*"
+
+    - name: require-image-tag
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Les images ne doivent pas utiliser le tag ':latest'"
+        pattern:
+          spec:
+            containers:
+              - image: "?*:*"
+
+    - name: require-resources
+      match:
+        resources:
+          kinds:
+            - Pod
+      validate:
+        message: "Chaque container doit définir resources.requests et resources.limits"
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  limits:
+                    cpu: "?*"
+                    memory: "?*"
+                  requests:
+                    cpu: "?*"
+                    memory: "?*"
