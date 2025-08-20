@@ -12,6 +12,15 @@ Les policies sont appliquées et testées automatiquement dans le pipeline GitLa
 └── nodejs-basic-policy.yaml # Policy spécifique à l'application Node.js
 
 ```
+---
+
+## 📌 Note importante
+
+👉 **NB : Le pipeline GitLab CI/CD associé à ces policies se trouve dans le dépôt de l’application Node.js**.  
+🔗 [Lien vers le dépôt GitLab](https://gitlab.com/grouptest2480246/my-test-app.git)  
+
+Les policies de ce dépôt sont **référencées et utilisées directement par ce pipeline** pour valider les manifests Kubernetes.
+
 
 ---
 
@@ -113,6 +122,7 @@ kyverno apply ./kyverno-policies/nodejs-basic-policy.yaml \
 
 ```
 ✅ Bénéfices
+
 Shift-left security : détection des problèmes tôt dans le cycle CI/CD.
 
 Automatisation : aucune validation manuelle requise.
