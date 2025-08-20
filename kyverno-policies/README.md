@@ -1,120 +1,122 @@
-# Kyverno Policies for NodeJS Application
+# 🛡️ Kyverno Policies pour Secure GitOps Lab
 
-Ce dépôt contient les politiques **Kyverno** utilisées pour sécuriser et valider les manifests Kubernetes de l'application **NodeJS Basic App** dans un pipeline **CI/CD GitLab**.
+Ce dépôt contient les **policies Kyverno** utilisées pour renforcer la sécurité et la conformité des déploiements Kubernetes dans le cadre du projet **Secure GitOps Lab**.  
+Les policies sont appliquées et testées automatiquement dans le pipeline GitLab CI/CD avant déploiement via ArgoCD.
 
 ---
 
 ## 📂 Structure du dépôt
-
-kyverno-policies/
-├── kyverno-test-policy.yaml # Politique de test pour démonstration
-└── nodejs-basic-policy.yaml # Politique principale appliquée sur l'app NodeJS
-
 ```yaml
+.
+├── kyverno-test-policy.yaml # Policy de test simple (label obligatoire)
+└── nodejs-basic-policy.yaml # Policy spécifique à l'application Node.js
 
-- **`nodejs-basic-policy.yaml`** : Politique Kyverno principale pour valider les manifests générés par Helm pour l’application NodeJS.  
-- **`kyverno-test-policy.yaml`** : Politique de test pour expérimentations et validations locales.  
 ```
+
 ---
 
 ## 🎯 Objectif
 
-L'objectif de cette politique est de :
-
-- ✅ Assurer que tous les manifests Kubernetes respectent les **bonnes pratiques de sécurité**.  
-- ✅ Valider que les déploiements Helm pour l’application NodeJS suivent les **standards définis**.  
-- ✅ Intégrer Kyverno dans le pipeline CI/CD pour un **contrôle automatisé avant le déploiement**.  
+- Vérifier la conformité des manifests Kubernetes générés par Helm.
+- Empêcher l’introduction de mauvaises pratiques dans les déploiements.
+- Intégrer une validation automatisée **en amont du déploiement** (shift-left security).
 
 ---
 
-## ⚙️ Intégration CI/CD GitLab
+## ⚙️ Intégration dans GitLab CI/CD
 
-Le pipeline **GitLab** (`.gitlab-ci.yml`) est structuré en **quatre stages** :
+Un job dédié (`kyverno_validate`) est exécuté dans le pipeline GitLab pour :
 
-1. **Build** : Construction et tagging de l’image Docker.  
-2. **Scan** : Analyse de sécurité de l’image avec Trivy.  
-3. **Kyverno Validation** : Validation des manifests Kubernetes générés par Helm via Kyverno.  
-4. **Deploy** : Déploiement GitOps vers les environnements `dev`, `staging` et `prod`.  
+1. Rendre les manifests Kubernetes avec Helm (selon l’environnement choisi).
+2. Appliquer les policies Kyverno en local avec Kyverno CLI.
+3. Stopper le pipeline si les règles ne sont pas respectées.
 
 ---
 
-## 🔑 Variables principales
+## 🔍 Étape Kyverno Validation dans le pipeline
+
+### Définition du job
 
 ```yaml
-variables:
-  IMAGE_NAME: registry.gitlab.com/grouptest2480246/my-test-app
-  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
+# ------------ Job scan kyverno ----------------
+kyverno_validate:
+  stage: scan
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl git bash tar openssl
+    - curl -L https://github.com/kyverno/kyverno/releases/download/v1.11.0/kyverno-cli_v1.11.0_linux_x86_64.tar.gz -o kyverno.tar.gz
+    - tar -xzf kyverno.tar.gz
+    - mv kyverno /usr/local/bin/
+    - curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    - git clone https://oauth2:${GITOPS_TOKEN}@github.com/ibrahimbakayoko/SecureGitOpsLab.git
+  script:
+    - echo "📦 Rendu des templates Helm avec les valeurs de dev"
+    - |
+      helm template my-app \
+        SecureGitOpsLab/argocd/helm-deploy/overlays/chart \
+        -f SecureGitOpsLab/argocd/helm-deploy/overlays/dev/dev-values.yaml \
+        > rendered.yaml
+    - grep -q "kind:" rendered.yaml || (echo "❌ Aucun manifest détecté" && exit 1)
+    - echo "🔍 Validation des manifests avec Kyverno"
+    - |
+      kyverno apply SecureGitOpsLab/kyverno-policies/kyverno-test-policy.yaml \
+        --resource rendered.yaml \
+        --namespace default
+
+  needs:
+    - scan_image
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
 ```
 
-🛠️ Étapes détaillées
-1. Build Image (build_image)
-Image Docker : docker:27.0.3
+Explications étape par étape
+Image et outils installés
 
-Services : docker:27.0.3-dind
+alpine:latest → image légère.
 
-Actions :
+Installation de Kyverno CLI, Helm v3 et Git.
 
-Connexion au registry GitLab
+Clonage du repo GitOps
 
-Build et tag de l’image Docker
+Récupération des charts Helm (helm-deploy/) et des policies (kyverno-policies/).
 
-Ajout du tag latest pour la branche main
+Rendu Helm
 
-2. Scan Image (scan_image)
-Image Docker : docker:24.0.6
+Génère les manifests Kubernetes avec helm template.
 
-Installation de Trivy pour l’analyse de sécurité
+Vérifie qu’ils contiennent bien des ressources (grep "kind:").
 
-Build de l’image localement puis scan
+Validation Kyverno
 
-Vérifie les vulnérabilités de niveau HIGH ou supérieures
+Applique les policies définies dans kyverno-policies/ sur le rendu.
 
-Dépendance : build_image
+Exemple : vérifier qu’un label app est présent sur chaque Pod.
 
-3. Validation Kyverno (kyverno_validate)
-Image : alpine:latest
+Conditions d’exécution
 
-Installation de Kyverno CLI et Helm
+Le job dépend de l’étape scan_image (Trivy).
 
-Clonage du repo GitOps contenant les charts Helm et les policies Kyverno
+Le job s’exécute uniquement sur la branche main.
 
-📌 Rendu Helm pour l’environnement dev :
+🧪 Reproduction locale
+Pour tester en local, exécuter :
 
 ```bash
-helm template my-app \
-  SecureGitOpsLab/argocd/helm-deploy/overlays/chart \
-  -f SecureGitOpsLab/argocd/helm-deploy/overlays/dev/dev-values.yaml \
-  > rendered.yaml
-📌 Validation via Kyverno :
-```
-```bash
-kyverno apply SecureGitOpsLab/kyverno-policies/nodejs-basic-policy.yaml \
-  --resource rendered.yaml \
-  --namespace default
-Dépendance : scan_image
+
+# Générer les manifests avec Helm
+helm template my-app ./helm-deploy/overlays/chart \
+  -f ./helm-deploy/overlays/dev/dev-values.yaml > rendered.yaml
+
+# Valider avec Kyverno
+kyverno apply ./kyverno-policies/nodejs-basic-policy.yaml \
+  --resource rendered.yaml --namespace default
 
 ```
-4. Déploiement GitOps (deploy_dev, deploy_staging, deploy_prod)
-Mise à jour des valeurs de l’image dans les fichiers Helm (yq)
+✅ Bénéfices
+Shift-left security : détection des problèmes tôt dans le cycle CI/CD.
 
-Commit et push vers le repo GitOps
+Automatisation : aucune validation manuelle requise.
 
-Déploiement automatisé selon l’ordre : dev → staging → prod
+Conformité : s’assure que les déploiements respectent les règles fixées.
 
-Chaque job dépend du précédent pour garantir une promotion contrôlée de l’image
-
-💻 Exemple de commande pour validation locale
-```bash
-# Appliquer la policy Kyverno sur un manifest local
-kyverno apply nodejs-basic-policy.yaml --resource rendered.yaml --namespace default
-```
-✅ Bonnes pratiques
-Toujours valider les manifests avec Kyverno avant tout déploiement.
-
-Scanner régulièrement les images Docker avec Trivy pour détecter les vulnérabilités.
-
-Utiliser un pipeline GitLab structuré pour automatiser build, scan, validation et déploiement.
-
-Maintenir les policies Kyverno à jour avec les standards Kubernetes et les exigences de sécurité de l’entreprise.
+Reproductibilité : mêmes commandes utilisables en local et dans le pipeline.
