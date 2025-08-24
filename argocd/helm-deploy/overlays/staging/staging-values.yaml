@@ -1,7 +1,7 @@
 replicaCount: 3
 image:
   repository: registry.gitlab.com/grouptest2480246/my-test-app
-  tag: "8d1d936d"
+  tag: "a63554fc"
   pullPolicy: IfNotPresent
 service:
   type: LoadBalancer
