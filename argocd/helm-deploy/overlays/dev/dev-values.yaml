@@ -1,7 +1,7 @@
 replicaCount: 2
 image:
   repository: registry.gitlab.com/grouptest2480246/my-test-app
-  tag: "f5811606"
+  tag: "517afad2"
   pullPolicy: Always
 service:
   type: ClusterIP
