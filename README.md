@@ -1,3 +1,5 @@
+<img src="./Docs/securegitopslab-illustration.png" alt="SecureGitOpsLab Architecture" style="width:100%;"/>
+
 # 🔐 SecureGitOpsLab
 
 🚀 Projet GitOps sécurisé et observable de bout en bout, dans le cadre de mon parcours #DevOpsOpenJourney.
