@@ -6,7 +6,7 @@
 
 ---
 
-## 🎯 Objectif
+## 🎯 Objectifs
 
 Déployer une architecture Kubernetes complète, automatisée et sécurisée avec :
 
