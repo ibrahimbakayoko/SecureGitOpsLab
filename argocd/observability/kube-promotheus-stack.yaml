@@ -10,8 +10,9 @@ spec:
     chart: kube-prometheus-stack
     targetRevision: 58.5.0
     helm:
-      installCRDs: true   # <- ajouté ici pour gérer les CRDs automatiquement
       values: |
+        prometheusOperator:
+          createCustomResource: true   # <-- permet à Helm de créer les CRDs automatiquement
         prometheus:
           enabled: true
           prometheusSpec:
