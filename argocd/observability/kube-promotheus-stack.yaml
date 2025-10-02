@@ -10,6 +10,7 @@ spec:
     chart: kube-prometheus-stack
     targetRevision: 58.5.0
     helm:
+      installCRDs: true   # <- ajouté ici pour gérer les CRDs automatiquement
       values: |
         prometheus:
           enabled: true
@@ -29,4 +30,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-
