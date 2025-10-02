@@ -12,6 +12,7 @@ spec:
     helm:
       values: |
         prometheus:
+          enabled: true
           prometheusSpec:
             serviceMonitorSelector: {}
             podMonitorSelector: {}
