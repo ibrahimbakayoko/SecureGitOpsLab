@@ -2,17 +2,19 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: my-test-app-servicemonitor
-  namespace: monitoring     # namespace Prometheus
+  namespace: monitoring        # namespace où Prometheus est installé
   labels:
     release: kube-prometheus-stack
 spec:
   selector:
     matchLabels:
-      app: my-test-app
+      app: my-test-app        # doit matcher le label de ton Service
   namespaceSelector:
     matchNames:
-      - default             # le namespace où est exposé ton Service
+      - default               # namespace où ton Service est exposé
   endpoints:
-    - port: metrics
+    - port: metrics           # nom du port défini dans le Service
       interval: 15s
+      path: /metrics          # s’assurer que Prometheus scrape la bonne URL
+      scheme: http            # optionnel si pas HTTPS
 

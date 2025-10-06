@@ -8,10 +8,10 @@ spec:
   source:
     repoURL: 'https://github.com/ibrahimbakayoko/SecureGitOpsLab.git'
     targetRevision: main
-    path: helm-deploy/overlays/chart
+    path: argocd/helm-deploy/overlays/chart
     helm:
       valueFiles:
-        - ../../prod/prod-values.yaml
+        - ../prod/prod-values.yaml
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
