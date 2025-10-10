@@ -18,6 +18,7 @@
 Dans le cadre de mon parcours **#DevOpsOpenJourney**, SecureGitOpsLab illustre comment automatiser, sécuriser et superviser un cluster Kubernetes et ses applications.
 
 <img src="./docs/securegitopslab-illustration.png" alt="SecureGitOpsLab Architecture" style="width:100%; border-radius:10px;"/>
+<img src="./Docs/securegitopslab-illustration.png" alt="SecureGitOpsLab Architecture" style="width:100%;"/>
 
 ---
 
