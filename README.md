@@ -92,8 +92,3 @@ Dans le cadre de mon parcours **#DevOpsOpenJourney**, SecureGitOpsLab illustre c
 🔗 [GitHub](https://github.com/ibrahimbakayoko)  
 
 ---
-
-## ⚡ Astuces
-- Épingler ce projet sur ton profil GitHub pour le mettre en avant  
-- Ajouter des **badges pour chaque technologie** (Terraform, Kubernetes, Prometheus…)  
-- Ajouter des **screenshots et diagrammes** pour rendre le README plus visuel
