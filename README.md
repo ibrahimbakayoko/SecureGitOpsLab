@@ -4,6 +4,13 @@
 [![GitHub forks](https://img.shields.io/github/forks/ibrahimbakayoko/SecureGitOpsLab?style=social)](https://github.com/ibrahimbakayoko/SecureGitOpsLab)
 [![GitHub issues](https://img.shields.io/github/issues/ibrahimbakayoko/SecureGitOpsLab)](https://github.com/ibrahimbakayoko/SecureGitOpsLab/issues)
 
+![Terraform](https://img.shields.io/badge/Terraform-623CE4?style=for-the-badge&logo=terraform&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)
+![Ansible](https://img.shields.io/badge/Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white)
+![ArgoCD](https://img.shields.io/badge/ArgoCD-EC6C00?style=for-the-badge&logo=argoproj&logoColor=white)
+
 ---
 
 ## 👋 Présentation
