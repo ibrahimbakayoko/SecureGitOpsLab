@@ -49,6 +49,16 @@ else
 fi
 
 # =========================
+# HELM
+# =========================
+echo "⛵ Installing Helm..."
+if ! command -v helm &> /dev/null; then
+  curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+else
+  echo "✔ Helm already installed"
+fi
+
+# =========================
 # VERIFY INSTALLS
 # =========================
 echo "🔎 Verifying tools..."
@@ -56,6 +66,7 @@ echo "🔎 Verifying tools..."
 docker --version
 kubectl version --client
 k3d version
+helm version
 git --version
 make --version
 
